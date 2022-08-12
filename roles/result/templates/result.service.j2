@@ -1,0 +1,19 @@
+[Unit]
+Description=Resultservice
+
+[Service]
+User=debian
+
+Environment=PORT=5000
+Environment=POSTGRESQL_USER={{ postgresql_user_name }}
+Environment=POSTGRESQL_PASSWORD={{ postgresql_user_password }}
+Environment=POSTGRESQL_HOST={{ hostvars['postgresql']['ansible_default_ipv4']['address'] }}
+Environment=POSTGRESQL_PORT={{ postgresql_db_port }}
+Environment=POSTGRESQL_DB={{ postgresql_db_name }}
+
+WorkingDirectory=/etc/result/result/
+ExecStart=nodejs server.js
+Restart=always
+
+[Install]
+WantedBy=basic.target

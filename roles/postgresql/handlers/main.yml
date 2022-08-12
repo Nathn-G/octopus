@@ -1,0 +1,11 @@
+
+- name: restart-postgresql
+  become: true
+  service: 
+    name: postgresql@12-main
+    state: restarted
+
+- name: execute-schema-sql
+  postgresql_query: 
+    db: paul
+    path_to_script: "/tmp/schema.sql"

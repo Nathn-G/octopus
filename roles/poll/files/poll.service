@@ -1,0 +1,18 @@
+# On utilise plus ce fichier
+# On utilise le fichier poll.service.j2 dans templates
+# Ça nous permet de ne pas avoir les hosts en dur dans ce fichier
+# On a mis tout les hosts dans le fichier group_vars/all.yml
+# Ça nous permet de changer les hosts à un seul endroit
+
+[Unit]
+Description=Pollservice
+
+[Service]
+User=debian
+Environment=REDIS_HOST=192.168.85.142
+WorkingDirectory=/etc/poll/poll/
+ExecStart=flask run --host=0.0.0.0
+Restart=always
+
+[Install]
+WantedBy=basic.target

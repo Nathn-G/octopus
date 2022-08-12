@@ -1,0 +1,6 @@
+
+- name: npm-init
+  become: yes
+  shell: "npm i"
+  args:
+    chdir: /etc/result/result/

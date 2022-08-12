@@ -1,0 +1,25 @@
+- name: playbook
+  hosts: all
+  roles:
+    - base
+
+- hosts: redis
+  roles:
+    - redis
+
+- hosts: postgresql
+  remote_user: postgres
+  roles:
+    - postgresql
+
+- hosts: poll
+  roles:
+    - poll
+
+- hosts: result
+  roles:
+    - result
+
+- hosts: worker
+  roles:
+    - worker

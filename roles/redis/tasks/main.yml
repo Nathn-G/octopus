@@ -1,0 +1,43 @@
+- name: Install redis
+  become: yes
+  apt:
+    name: redis-server
+    update_cache: yes
+
+- name: Replace redis.conf
+  become: yes
+  copy:
+    src: "../files/override.conf"
+    dest: "/etc/systemd/system/redis-server.service.d/"
+    mode: 0777
+
+- name: upload redis.conf
+  become: true
+  copy:
+    src: ../files/redis.conf
+    dest: /etc/redis/redis.conf
+    owner: redis
+    group: redis
+    mode: 0640
+  register: override
+
+- name: daemon reload redis
+  become: true
+  systemd:
+    daemon_reload: yes
+  when: override.changed
+
+- name: restart redis
+  become: true
+  systemd:
+    name: redis-server
+    state: restarted
+    enabled: yes
+  when: override.changed
+
+- name: Start service
+  become: true
+  service:
+    name: redis-server
+    state: started
+    enabled: yes

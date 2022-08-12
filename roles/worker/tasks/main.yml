@@ -1,0 +1,40 @@
+- name: install packages
+  become: yes
+  apt:
+    state: present
+    name:
+      - default-jre
+      - default-jdk
+      - maven
+
+- name: copy worker.tar to vm
+  become: yes
+  copy:
+    src: "../../../worker.tar"
+    dest: "/etc/worker/"
+    mode: 0777
+  notify: extract-worker-tar
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Create worker systemd service file
+  become: yes
+  template:
+    src: templates/worker.service.j2
+    dest: "/etc/systemd/system/worker.service"
+    mode: 0777
+
+# - name: Copy worker.service
+#   become: yes
+#   copy:
+#     src: "../files/worker.service"
+#     dest: "/etc/systemd/system/worker.service"
+#     mode: 0777
+
+- name: Enable worker/service
+  become: yes
+  systemd:
+    name: worker
+    state: started
+    enabled: yes

@@ -1,0 +1,45 @@
+- name: install packages
+  become: yes
+  apt:
+    state: present
+    name:
+      - nodejs
+      - npm
+
+- name: copy result.tar to vm
+  become: yes
+  copy:
+    src: "../../../result.tar"
+    dest: "/etc/result/"
+    mode: 0777
+
+- name: Extract result.tar
+  become: yes
+  ansible.builtin.unarchive:
+    src: result.tar
+    dest: /etc/result/
+  notify: npm-init
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Create result systemd service file
+  become: yes
+  template:
+    src: templates/result.service.j2
+    dest: "/etc/systemd/system/result.service"
+    mode: 0777
+
+# - name: Copy result.service
+#   become: yes
+#   copy:
+#     src: "../files/result.service"
+#     dest: "/etc/systemd/system/result.service"
+#     mode: 0777
+
+- name: Enable result/service
+  become: yes
+  systemd:
+    name: result
+    state: started
+    enabled: yes

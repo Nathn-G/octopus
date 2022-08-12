@@ -1,0 +1,26 @@
+# On utilise plus ce fichier
+# On utilise le fichier worker.service.j2 dans templates
+# Ça nous permet de ne pas avoir les hosts et le mdp en dur dans ce fichier
+# On a mis tout les hosts dans le fichier group_vars/all.yml
+# Ça nous permet de changer les hosts à un seul endroit
+
+[Unit]
+Description=Workerservice
+
+[Service]
+User=debian
+
+Environment=REDIS_HOST=192.168.85.142
+Environment=POSTGRESQL_HOST=192.168.85.150
+Environment=POSTGRESQL_PORT=5432
+Environment=POSTGRESQL_DB=paul
+Environment=POSTGRESQL_USER=paul
+Environment=POSTGRESQL_PASSWORD=democracyIsFragile
+
+WorkingDirectory=/etc/worker/worker/
+ExecStartPre=mvn -f pom.xml clean package
+ExecStart=java -jar target/worker-jar-with-dependencies.jar
+Restart=always
+
+[Install]
+WantedBy=basic.target

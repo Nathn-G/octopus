@@ -1,0 +1,25 @@
+# On utilise plus ce fichier
+# On utilise le fichier result.service.j2 dans templates
+# Ça nous permet de ne pas avoir les hosts et le mdp en dur dans ce fichier
+# On a mis tout les hosts dans le fichier group_vars/all.yml
+# Ça nous permet de changer les hosts à un seul endroit
+
+[Unit]
+Description=Resultservice
+
+[Service]
+User=debian
+
+Environment=PORT=5000
+Environment=POSTGRESQL_USER=paul
+Environment=POSTGRESQL_PASSWORD=democracyIsFragile
+Environment=POSTGRESQL_HOST=192.168.85.150
+Environment=POSTGRESQL_PORT=5432
+Environment=POSTGRESQL_DB=paul
+
+WorkingDirectory=/etc/result/result/
+ExecStart=nodejs server.js
+Restart=always
+
+[Install]
+WantedBy=basic.target

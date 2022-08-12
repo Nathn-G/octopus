@@ -1,0 +1,52 @@
+
+- name: copy poll.tar to vm
+  become: true
+  copy:
+    src: "../../../poll.tar"
+    dest: "/etc/poll/"
+    mode: 0777
+
+- name: Extract poll.tar
+  become: true
+  ansible.builtin.unarchive:
+    src: poll.tar
+    dest: /etc/poll/
+
+- name: Create poll systemd service file
+  become: yes
+  template:
+    src: templates/poll.service.j2
+    dest: "/etc/systemd/system/poll.service"
+    mode: 0777
+  notify:
+    - daemon-reload
+    - restart-poll
+
+# - name: Copy poll.service
+#   become: true
+#   copy:
+#     src: "../files/poll.service"
+#     dest: "/etc/systemd/system/poll.service"
+#     mode: 0777
+#   notify:
+#     - daemon-reload
+#     - restart-poll
+
+- name: Install pip
+  become: true
+  apt:
+    state: present
+    name:
+      - python-pip
+
+- name: Install pip packages
+  become: true
+  pip:
+    requirements: /etc/poll/poll/requirements.txt
+
+- name: Enable poll/service
+  become: true
+  systemd:
+    name: poll
+    state: started
+    enabled: yes

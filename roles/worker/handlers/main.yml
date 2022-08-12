@@ -1,0 +1,6 @@
+
+- name: extract-worker-tar
+  become: yes
+  ansible.builtin.unarchive:
+    src: worker.tar
+    dest: /etc/worker/

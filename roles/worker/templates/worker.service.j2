@@ -1,0 +1,20 @@
+[Unit]
+Description=Workerservice
+
+[Service]
+User=debian
+
+Environment=REDIS_HOST={{ hostvars['redis']['ansible_default_ipv4']['address'] }}
+Environment=POSTGRESQL_HOST={{ hostvars['postgresql']['ansible_default_ipv4']['address'] }}
+Environment=POSTGRESQL_PORT={{ postgresql_db_port }}
+Environment=POSTGRESQL_DB={{ postgresql_db_name }}
+Environment=POSTGRESQL_USER={{ postgresql_user_name }}
+Environment=POSTGRESQL_PASSWORD={{ postgresql_user_password }}
+
+WorkingDirectory=/etc/worker/worker/
+ExecStartPre=mvn -f pom.xml clean package
+ExecStart=java -jar target/worker-jar-with-dependencies.jar
+Restart=always
+
+[Install]
+WantedBy=basic.target

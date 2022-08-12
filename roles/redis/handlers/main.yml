@@ -1,0 +1,11 @@
+
+- name: daemon-reload
+  become: true
+  systemd:
+    daemon_reload: yes
+
+- name: restart-service
+  become: true
+  service:
+    name: redis-server
+    state: restarted
